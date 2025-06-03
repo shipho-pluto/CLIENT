@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/shipho-pluto/CLIENT/service"
-	"github.com/shipho-pluto/CLIENT/service/service"
 	"io/fs"
 	"log/slog"
 	"net/http"
@@ -60,13 +59,13 @@ type ConfigSSO struct {
 	}
 }
 
-type ClientFabric struct {
+type Fabric struct {
 	CRUD       *service.ClientCRUD
 	SSO        *service.ClientSSO
 	HttpServer *http.Server
 }
 
-func ClientMustLoad(cnf1 *ConfigMessage, cnf2 *ConfigSSO, logger *slog.Logger) *ClientFabric {
+func MustLoad(cnf1 *ConfigMessage, cnf2 *ConfigSSO, logger *slog.Logger) *Fabric {
 	crudClient, err := service.NewCRUD(
 		context.Background(),
 		logger,
@@ -98,7 +97,7 @@ func ClientMustLoad(cnf1 *ConfigMessage, cnf2 *ConfigSSO, logger *slog.Logger) *
 		Handler: setupRoutes(ssoClient, crudClient, logger),
 	}
 
-	return &ClientFabric{
+	return &Fabric{
 		HttpServer: httpServerMes,
 		CRUD:       crudClient,
 		SSO:        ssoClient,
@@ -255,7 +254,10 @@ func setupRoutes(cliSso *service.ClientSSO, cliMes *service.ClientCRUD, logger *
 			}
 
 			w.Header().Set("Content-Type", "application/json")
-			fmt.Fprintf(w, `{"status": "success", "message_id": %d, "datetime": %q}`, mid, datetime)
+			fprintf, err := fmt.Fprintf(w, `{"status": "success", "message_id": %d, "datetime": %q}`, mid, datetime)
+			if _ = fprintf; err != nil {
+				return
+			}
 
 		case "GET":
 			// Получаем все сообщения

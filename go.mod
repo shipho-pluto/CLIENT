@@ -1,4 +1,4 @@
-module github.com/shipho-pluto/CLIENT/service
+module github.com/shipho-pluto/CLIENT
 
 go 1.24
 
