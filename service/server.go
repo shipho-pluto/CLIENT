@@ -1,4 +1,4 @@
-package client
+package service
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/shipho-pluto/CLIENT/service"
 	"io/fs"
 	"log/slog"
 	"net/http"
@@ -60,13 +59,13 @@ type ConfigSSO struct {
 }
 
 type Fabric struct {
-	CRUD       *service.ClientCRUD
-	SSO        *service.ClientSSO
+	CRUD       *ClientCRUD
+	SSO        *ClientSSO
 	HttpServer *http.Server
 }
 
 func MustLoad(cnf1 *ConfigMessage, cnf2 *ConfigSSO, logger *slog.Logger) *Fabric {
-	crudClient, err := service.NewCRUD(
+	crudClient, err := NewCRUD(
 		context.Background(),
 		logger,
 		cnf1.Clients.CRUD.Addr,
@@ -79,7 +78,7 @@ func MustLoad(cnf1 *ConfigMessage, cnf2 *ConfigSSO, logger *slog.Logger) *Fabric
 	}
 	logger.Info("ClientCRUD initialized")
 
-	ssoClient, err := service.NewSSO(
+	ssoClient, err := NewSSO(
 		context.Background(),
 		logger,
 		cnf2.Clients.SSO.Addr,
@@ -107,7 +106,7 @@ func MustLoad(cnf1 *ConfigMessage, cnf2 *ConfigSSO, logger *slog.Logger) *Fabric
 //go:embed all:front/*
 var frontFS embed.FS
 
-func setupRoutes(cliSso *service.ClientSSO, cliMes *service.ClientCRUD, logger *slog.Logger) *http.ServeMux {
+func setupRoutes(cliSso *ClientSSO, cliMes *ClientCRUD, logger *slog.Logger) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	templates := template.Must(template.ParseFS(frontFS,

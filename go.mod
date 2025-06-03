@@ -4,7 +4,6 @@ go 1.24
 
 require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.2
-	github.com/shipho-pluto/MESSAGE v0.0.0-20250603134720-3a0202d3b9e9
 	github.com/shipho-pluto/PROTO v0.0.0-20250602162350-87e4886d4983
 	google.golang.org/grpc v1.72.2
 )
